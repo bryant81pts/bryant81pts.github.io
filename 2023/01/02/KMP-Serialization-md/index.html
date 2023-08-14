@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>KMP中的序列化 | Lightsout</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Kotlin在语言层级没有直接支持序列化与反序列化，但是Kotlin multiplatform提供了现成的库kotlinx.serialization支持相关功能。 配置要使用这个库需要在项目根目录的build.gradle.kts文件中加入 1classpath(&quot;org.jetbrains.kotlin:kotlin-serialization:1.6.10&quot;)    接">
+<meta property="og:type" content="article">
+<meta property="og:title" content="KMP中的序列化">
+<meta property="og:url" content="http://example.com/2023/01/02/KMP-Serialization-md/index.html">
+<meta property="og:site_name" content="Lightsout">
+<meta property="og:description" content="Kotlin在语言层级没有直接支持序列化与反序列化，但是Kotlin multiplatform提供了现成的库kotlinx.serialization支持相关功能。 配置要使用这个库需要在项目根目录的build.gradle.kts文件中加入 1classpath(&quot;org.jetbrains.kotlin:kotlin-serialization:1.6.10&quot;)    接">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://s2.loli.net/2023/01/02/bZRSaWLIAi6EhmG.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/02/8OzqHQp3tUBlP7f.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/02/ZyzUXBNI7JAlMcR.png">
+<meta property="article:published_time" content="2023-01-02T15:00:00.000Z">
+<meta property="article:modified_time" content="2023-08-14T06:50:58.094Z">
+<meta property="article:author" content="Evan Hong">
+<meta property="article:tag" content="KMP">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/01/02/bZRSaWLIAi6EhmG.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Lightsout" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Lightsout</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">YOLO</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-KMP-Serialization-md" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/01/02/KMP-Serialization-md/" class="article-date">
+  <time class="dt-published" datetime="2023-01-02T15:00:00.000Z" itemprop="datePublished">2023-01-02</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      KMP中的序列化
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>Kotlin在语言层级没有直接支持序列化与反序列化，但是Kotlin multiplatform提供了现成的库kotlinx.serialization支持相关功能。</p>
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p>要使用这个库需要在项目根目录的build.gradle.kts文件中加入</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">classpath(<span class="string">&quot;org.jetbrains.kotlin:kotlin-serialization:1.6.10&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<img src="https://s2.loli.net/2023/01/02/bZRSaWLIAi6EhmG.png" width="400px" />
+
+<p>接着在shared文件夹中build.gradle.kts中的plugins添加</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kotlin(<span class="string">&quot;plugin.serialization&quot;</span>)</span><br></pre></td></tr></table></figure>
+<img src="https://s2.loli.net/2023/01/02/8OzqHQp3tUBlP7f.png" width="400px" />
+
+<p>sync一下，库就会加入到项目中。</p>
+<p>项目里会有4种build.gradle.kts文件：</p>
+<ul>
+<li><p>build.gradle.kts: 位于项目的根目录，用于配置Android app 和 shared module，包含依赖项下载的仓库。</p>
+</li>
+<li><p>shared&#x2F;build.gradle.kts： shared module的配置文件，包含插件、库、目标平台等。</p>
+</li>
+<li><p>androidApp&#x2F;build.gradle.kts： Android app的配置文件，定义了用于编译项目的参数、sdk版本、依赖和编译flags。</p>
+</li>
+<li><p>desktopApp&#x2F;build.gradle.kts:  桌面app的配置文件， 和Android对应的文件配置一致。</p>
+</li>
+</ul>
+<h4 id="支持的序列化"><a href="#支持的序列化" class="headerlink" title="支持的序列化"></a>支持的序列化</h4><p>kotlinx.serialization支持以下序列化格式</p>
+<ul>
+<li><p>JSON: kotlinx-serialization-json</p>
+</li>
+<li><p>Protocol buffers: kotlinx-serialization-protobuf</p>
+</li>
+<li><p>CBOR: 一种二进制数据序列化格式  kotlinx-serialization-cbor</p>
+</li>
+<li><p>Properties:  一种key-value文件，例如gradle.properties。kotlinx-serialization-properties</p>
+</li>
+<li><p>HOCON: JSON的超集，有更好的可读性，多用于配置文件。kotlinx.serailization-hocon</p>
+</li>
+</ul>
+<p>除了kotilin-serialization-json，其他库都还只是在beta阶段，意味着api在后续的版本中大概率会大改。</p>
+<p>在shared&#x2F;build.gradle.kts中的commonMain里的dependencies中添加</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">implementation(<span class="string">&quot;org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2&quot;</span>)</span><br></pre></td></tr></table></figure>
+<img src="https://s2.loli.net/2023/01/02/ZyzUXBNI7JAlMcR.png" width="400px" />
+
+<p>再次sync一下，就ready-to-use了。</p>
+<h2 id="自定义serializer"><a href="#自定义serializer" class="headerlink" title="自定义serializer"></a>自定义serializer</h2><p>假设有如下enum</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> <span class="keyword">class</span> <span class="title class_">RECORDTYPE</span>(<span class="keyword">val</span> value: String) &#123;</span><br><span class="line">  RECORD(<span class="string">&quot;record&quot;</span>)</span><br><span class="line">  TASK(<span class="string">&quot;task&quot;</span>),</span><br><span class="line">  AUTO(<span class="string">&quot;auto&quot;</span>),</span><br><span class="line">  HISTORY(<span class="string">&quot;history&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>kotlinx-serialization-json不能解析RECORD、TASK、 AUTO、 HISTORY等关键字，因为RECORDTYPE类型并不能被识别，所以就需要自定义serializer&#x2F;deserializer。</p>
+<p>首先要在自定义serializer文件中增加findByKey函数:</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">findByKey</span><span class="params">(key: <span class="type">String</span>, default: <span class="type">RECORDTYPE</span> = RECORDTYPE.RECORD)</span></span>: RECORDTYPE &#123;</span><br><span class="line">  <span class="keyword">return</span> RECORDTYPE.values().find &#123; it.value == key &#125; ?: default</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>findByKey函数主要起到mapping的作用。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*serializer文件*/</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@OptIn(ExperimentalSerializationApi::class)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 将CustomSerializer与特定的class关联起来，此处为RECORDTYPE</span></span><br><span class="line"><span class="meta">@Serializer(forClass = RECORDTYPE::class)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 拓展KSerializer类并定义要被序列化或反序列化对象的类型</span></span><br><span class="line"><span class="keyword">object</span> CustomSerializer : KSerializer&lt;RECORDTYPE&gt; &#123;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义参数读取的方式</span></span><br><span class="line">  <span class="keyword">override</span> <span class="keyword">val</span> descriptor: SerialDescriptor =</span><br><span class="line">    PrimitiveSerialDescriptor(<span class="string">&quot;RECORDTYPE&quot;</span>, PrimitiveKind.STRING)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">serialize</span><span class="params">(encoder: <span class="type">Encoder</span>, value: <span class="type">RECORDTYPE</span>)</span></span> &#123;</span><br><span class="line">    encoder.encodeString(value.value)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">deserialize</span><span class="params">(decoder: <span class="type">Decoder</span>)</span></span>: RECORDTYPE &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="keyword">val</span> key = decoder.decodeString()</span><br><span class="line">      findByKey(key)</span><br><span class="line">    &#125; <span class="keyword">catch</span> (e: IllegalArgumentException) &#123;</span><br><span class="line">      RECORDTYPE.RECORD</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最后在RECORDTYPE的声明前加上</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Serializable(with = CustomSerializer::class)</span></span><br></pre></td></tr></table></figure>
+<p>即可</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Serializable(with = CustomSerializer::class)</span></span><br><span class="line"><span class="keyword">enum</span> <span class="keyword">class</span> <span class="title class_">RECORDTYPE</span>(<span class="keyword">val</span> value: String) &#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Data-to-Model"><a href="#Data-to-Model" class="headerlink" title="Data to Model"></a>Data to Model</h2><p>假设一个接口返回的json结构是</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line"><span class="attr">&quot;recordtype&quot;</span><span class="punctuation">:</span> xx<span class="punctuation">,</span></span><br><span class="line"><span class="attr">&quot;title&quot;</span><span class="punctuation">:</span> xx<span class="punctuation">,</span></span><br><span class="line"><span class="attr">&quot;url&quot;</span><span class="punctuation">:</span> https<span class="punctuation">:</span><span class="comment">//www.xx.com/xxx</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>那么项目中中对应的model为</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">data</span> <span class="keyword">class</span> <span class="title class_">Record</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> recordType: RECORDTYPE</span><br><span class="line">    <span class="keyword">var</span> title: String</span><br><span class="line">    <span class="keyword">var</span> url: String</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这时候需要在model声明前加上<code>@Serializable</code>，通过这个标记接口返回的jsonstring就会mapping转换成对应的model。</p>
+<p>除此之外遇到undefinekey会有崩溃的可能，所以进行过滤处理。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">val</span> json = Json &#123; ignoreUnknownKeys = <span class="literal">true</span> &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> content: List&lt;Record&gt; <span class="keyword">by</span> lazy &#123;</span><br><span class="line">  json.decodeFromString(RAW_JSONSTRING)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/01/02/KMP-Serialization-md/" data-id="cllainvg30004j39k9fiy4i9b" data-title="KMP中的序列化" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/KMP/" rel="tag">KMP</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2023/05/14/KMP-Key-Value-md/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          KMP数据持久化之Key-Value
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/12/20/LiveActivity-md/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">LiveActivity.md</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Combine/" rel="tag">Combine</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KMP/" rel="tag">KMP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SwiftUI/" rel="tag">SwiftUI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/" rel="tag">iOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%B6%E7%A2%8E%E7%9F%A5%E8%AF%86/" rel="tag">零碎知识</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Combine/" style="font-size: 10px;">Combine</a> <a href="/tags/KMP/" style="font-size: 15px;">KMP</a> <a href="/tags/SwiftUI/" style="font-size: 10px;">SwiftUI</a> <a href="/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/tags/%E9%9B%B6%E7%A2%8E%E7%9F%A5%E8%AF%86/" style="font-size: 10px;">零碎知识</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/05/14/KMP-Key-Value-md/">KMP数据持久化之Key-Value</a>
+          </li>
+        
+          <li>
+            <a href="/2023/01/02/KMP-Serialization-md/">KMP中的序列化</a>
+          </li>
+        
+          <li>
+            <a href="/2022/12/20/LiveActivity-md/">LiveActivity.md</a>
+          </li>
+        
+          <li>
+            <a href="/2022/05/18/Combine%20%E2%85%A1/">Combine 浅尝 Ⅱ</a>
+          </li>
+        
+          <li>
+            <a href="/2022/05/17/Combine%20%E2%85%A0/">Combine 浅尝 Ⅰ</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Evan Hong<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

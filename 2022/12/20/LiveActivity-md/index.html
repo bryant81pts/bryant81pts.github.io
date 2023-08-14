@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>LiveActivity.md | Lightsout</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Live Activities是iOS 16比较亮眼的新功能之一，它允许App在锁屏界面或者iPhone 14 Pro系列的Dynamic Island上展示“当前正在进行的活动“的动态信息，比如用了饿了么点了外卖后，锁屏界面就会显示你的外卖进度：   或者用直播8关注球赛，直接在锁屏界面摸鱼看文字直播：  直接省去了进入App才能查看进度状态的步骤。   Live Activities基本概念每">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LiveActivity.md">
+<meta property="og:url" content="http://example.com/2022/12/20/LiveActivity-md/index.html">
+<meta property="og:site_name" content="Lightsout">
+<meta property="og:description" content="Live Activities是iOS 16比较亮眼的新功能之一，它允许App在锁屏界面或者iPhone 14 Pro系列的Dynamic Island上展示“当前正在进行的活动“的动态信息，比如用了饿了么点了外卖后，锁屏界面就会显示你的外卖进度：   或者用直播8关注球赛，直接在锁屏界面摸鱼看文字直播：  直接省去了进入App才能查看进度状态的步骤。   Live Activities基本概念每">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://s2.loli.net/2023/01/02/xHOEuTg7pKDiSqX.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/02/rFJmL9Gq31hSsac.png">
+<meta property="article:published_time" content="2022-12-20T06:26:15.000Z">
+<meta property="article:modified_time" content="2023-08-14T06:50:58.094Z">
+<meta property="article:author" content="Evan Hong">
+<meta property="article:tag" content="iOS">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/01/02/xHOEuTg7pKDiSqX.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Lightsout" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Lightsout</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">YOLO</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-LiveActivity-md" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/12/20/LiveActivity-md/" class="article-date">
+  <time class="dt-published" datetime="2022-12-20T06:26:15.000Z" itemprop="datePublished">2022-12-20</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      LiveActivity.md
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>Live Activities是iOS 16比较亮眼的新功能之一，它允许App在锁屏界面或者iPhone 14 Pro系列的Dynamic Island上展示“当前正在进行的活动“的动态信息，比如用了饿了么点了外卖后，锁屏界面就会显示你的外卖进度：</p>
+<img src="https://s2.loli.net/2023/01/02/xHOEuTg7pKDiSqX.png" width="400px" />
+
+<p>或者用直播8关注球赛，直接在锁屏界面摸鱼看文字直播：</p>
+<img src="https://s2.loli.net/2023/01/02/rFJmL9Gq31hSsac.png" width="400px" />
+直接省去了进入App才能查看进度状态的步骤。
+
+
+<h3 id="Live-Activities基本概念"><a href="#Live-Activities基本概念" class="headerlink" title="Live Activities基本概念"></a>Live Activities基本概念</h3><p>每个Live Activity的状态可以最多持续更新8个小时，前提是App或者用户没有去手动停止。 一旦超过了8小时的限制，系统会自动杀掉对应的Activiity，此时Live Activity会自动从Dynamic Island消失，但是在锁屏界面会最多保持12个小时。</p>
+<p>Live Activity需要用到WidgetKit来实现相关功能，Home Screen Widgets和 Live Activity之间也可以共用代码，但是Live Activity并不是Widget，Widget用timeline来更新界面数据等，而更新Live Activity的更新需要在app内借助ActivityKit框架。</p>
+<h3 id="数据"><a href="#数据" class="headerlink" title="数据"></a>数据</h3><p>Live Activity包含两种类型的数据：静态数据和动态数据。以球赛为例，静态数据就是两队的队名、logo等；动态数据就是即时比分、文字直播信息等。需要注意的是每次更新的数据大小不能超过4kb的限制。</p>
+<p>AcitivityKit需要我们通过实现ActivityAttributes protocol来描述数据类型，可以想象成data model。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> ActivityKit</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">NBAGame</span>: <span class="title class_">ActivityAttributes</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">typealias</span> <span class="type">GameState</span> <span class="operator">=</span> <span class="type">ContentState</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">struct</span> <span class="title class_">ContentState</span>: <span class="title class_">Codable</span>, <span class="title class_">Hashable</span> &#123;</span><br><span class="line">        <span class="keyword">var</span> score1: <span class="type">Int</span></span><br><span class="line">        <span class="keyword">var</span> score2: nt</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> team1: <span class="type">String</span></span><br><span class="line">    <span class="keyword">var</span> team2: <span class="type">String</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="启动Live-Activity"><a href="#启动Live-Activity" class="headerlink" title="启动Live Activity"></a>启动Live Activity</h3><p>app必须要在前台启动Live Activity,  并且在info.plist里把NSSupportLiveActivities设置为YES。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">func</span> <span class="title function_">request</span>(</span><br><span class="line">    <span class="params">attributes</span>: <span class="type">Attributes</span>,</span><br><span class="line">    <span class="params">content</span>: <span class="type">ActivityContent</span>&lt;<span class="type">Activity</span>&lt;<span class="type">Attributes</span>&gt;.<span class="type">ContentState</span>&gt;,</span><br><span class="line">    <span class="params">pushType</span>: <span class="type">PushType</span>? <span class="operator">=</span> <span class="literal">nil</span></span><br><span class="line">) <span class="keyword">throws</span> -&gt; <span class="type">Activity</span>&lt;<span class="type">Attributes</span>&gt;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> <span class="type">ActivityAuthorizationInfo</span>().areActivitiesEnabled &#123;</span><br><span class="line">    <span class="keyword">do</span> &#123;</span><br><span class="line">        <span class="comment">// request函数有3个参数</span></span><br><span class="line">        <span class="comment">// attributes 描述静态数据</span></span><br><span class="line">        <span class="comment">// contentState 描述随着时间变化的动态数据</span></span><br><span class="line">        <span class="comment">// pushType 默认为nil，表示通过update方法来更新数据，如果需要通过推送更新则需要传入token</span></span><br><span class="line">        activity <span class="operator">=</span> <span class="keyword">try</span> <span class="type">Activity</span>.request(</span><br><span class="line">            attributes: <span class="type">NBAGame</span>(</span><br><span class="line">                team1: <span class="string">&quot;Lakers&quot;</span>,</span><br><span class="line">                team2: <span class="string">&quot;Celtics&quot;</span></span><br><span class="line">            ),</span><br><span class="line">            contentState: .<span class="keyword">init</span>(</span><br><span class="line">                score1: <span class="number">0</span>,</span><br><span class="line">                score2: <span class="number">0</span></span><br><span class="line">            )</span><br><span class="line">        )</span><br><span class="line">    &#125; <span class="keyword">catch</span> (<span class="keyword">let</span> error) &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="更新Live-Activity"><a href="#更新Live-Activity" class="headerlink" title="更新Live Activity"></a>更新Live Activity</h3><p>虽然启动Live Activify需要在前台进行，但是更新或者停止移除等操作可以通过Background Tasks执行。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 更新</span></span><br><span class="line"><span class="keyword">func</span> <span class="title function_">update</span>(<span class="keyword">_</span> <span class="params">content</span>: <span class="type">ActivityContent</span>&lt;<span class="type">Activity</span>&lt;<span class="type">Attributes</span>&gt;.<span class="type">ContentState</span>&gt;) <span class="keyword">async</span></span><br><span class="line"></span><br><span class="line"><span class="type">Task</span> &#123;</span><br><span class="line">    <span class="keyword">await</span> activity.update(using: .<span class="keyword">init</span>(score1: <span class="number">48</span>, score2: <span class="number">50</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 停止</span></span><br><span class="line"><span class="comment">// ActivityUIDismissalPolicy提供了ui延迟移除的选项，最多可以延迟4小时。</span></span><br><span class="line"><span class="keyword">func</span> <span class="title function_">end</span>(</span><br><span class="line">    <span class="keyword">_</span> <span class="params">content</span>: <span class="type">ActivityContent</span>&lt;<span class="type">Activity</span>&lt;<span class="type">Attributes</span>&gt;.<span class="type">ContentState</span>&gt;?,</span><br><span class="line">    <span class="params">dismissalPolicy</span>: <span class="type">ActivityUIDismissalPolicy</span> <span class="operator">=</span> .default</span><br><span class="line">) <span class="keyword">async</span></span><br><span class="line"></span><br><span class="line"><span class="type">Task</span> &#123;</span><br><span class="line">    <span class="keyword">await</span> activity.end(</span><br><span class="line">        using: .<span class="keyword">init</span>(score1: <span class="number">120</span>, score2: <span class="number">90</span>),</span><br><span class="line">        dismissalPolicy: .immediate</span><br><span class="line">    )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="展示Live-Activity"><a href="#展示Live-Activity" class="headerlink" title="展示Live Activity"></a>展示Live Activity</h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">@main</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">NBAGameActivityWidget</span>: <span class="title class_">Widget</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">WidgetConfiguration</span> &#123;</span><br><span class="line">        <span class="type">ActivityConfiguration</span>(for: <span class="type">NBAGame</span>.<span class="keyword">self</span>) &#123; context <span class="keyword">in</span></span><br><span class="line">            <span class="comment">// 配置锁屏的小组件</span></span><br><span class="line">            <span class="type">SomeActivityView</span>()<span class="operator">...</span></span><br><span class="line">        &#125; dynamicIsland: &#123; context <span class="keyword">in</span></span><br><span class="line">            <span class="comment">// 配置Dynamic Island</span></span><br><span class="line">            <span class="type">DynamicIsland</span> &#123;</span><br><span class="line">                </span><br><span class="line">            &#125; compactLeading: &#123;</span><br><span class="line">                </span><br><span class="line">            &#125; compactTrailing: &#123;</span><br><span class="line">                </span><br><span class="line">            &#125; minimal: &#123;</span><br><span class="line">                </span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果app已有Widget并想增加Live Activity的话需要在现有的WdigetBundle里添加</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">@main</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">PizzaDeliveryWidgets</span>: <span class="title class_">WidgetBundle</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">Widget</span> &#123;</span><br><span class="line">        <span class="type">FavoritePizzaWidget</span>()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">#available</span>(<span class="keyword">iOS</span> <span class="number">16.1</span>, <span class="operator">*</span>) &#123;</span><br><span class="line">            <span class="type">NBAGameActivityWidget</span>()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/12/20/LiveActivity-md/" data-id="cllainvg30005j39kgkfjdod1" data-title="LiveActivity.md" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/" rel="tag">iOS</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2023/01/02/KMP-Serialization-md/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          KMP中的序列化
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/05/18/Combine%20%E2%85%A1/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Combine 浅尝 Ⅱ</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Combine/" rel="tag">Combine</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KMP/" rel="tag">KMP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SwiftUI/" rel="tag">SwiftUI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/" rel="tag">iOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%B6%E7%A2%8E%E7%9F%A5%E8%AF%86/" rel="tag">零碎知识</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Combine/" style="font-size: 10px;">Combine</a> <a href="/tags/KMP/" style="font-size: 15px;">KMP</a> <a href="/tags/SwiftUI/" style="font-size: 10px;">SwiftUI</a> <a href="/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/tags/%E9%9B%B6%E7%A2%8E%E7%9F%A5%E8%AF%86/" style="font-size: 10px;">零碎知识</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/05/14/KMP-Key-Value-md/">KMP数据持久化之Key-Value</a>
+          </li>
+        
+          <li>
+            <a href="/2023/01/02/KMP-Serialization-md/">KMP中的序列化</a>
+          </li>
+        
+          <li>
+            <a href="/2022/12/20/LiveActivity-md/">LiveActivity.md</a>
+          </li>
+        
+          <li>
+            <a href="/2022/05/18/Combine%20%E2%85%A1/">Combine 浅尝 Ⅱ</a>
+          </li>
+        
+          <li>
+            <a href="/2022/05/17/Combine%20%E2%85%A0/">Combine 浅尝 Ⅰ</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Evan Hong<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

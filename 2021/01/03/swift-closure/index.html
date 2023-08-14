@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Swift中闭包的本质 | Lightsout</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Swift中闭包相关的概念   一个函数和它所捕获的变量\常量环境组合起来，称作闭包.  一般指定义在函数内部的函数.  一般它捕获的是外层函数的局部变量\常量.    利用汇编理解闭包本质  123456789101112131415161718typealias Fn &#x3D; (Int) -&gt; Intfunc getFn() -&gt; Fn &amp;#123;    var num &#x3D; 0">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Swift中闭包的本质">
+<meta property="og:url" content="http://example.com/2021/01/03/swift-closure/index.html">
+<meta property="og:site_name" content="Lightsout">
+<meta property="og:description" content="Swift中闭包相关的概念   一个函数和它所捕获的变量\常量环境组合起来，称作闭包.  一般指定义在函数内部的函数.  一般它捕获的是外层函数的局部变量\常量.    利用汇编理解闭包本质  123456789101112131415161718typealias Fn &#x3D; (Int) -&gt; Intfunc getFn() -&gt; Fn &amp;#123;    var num &#x3D; 0">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-01-03T06:38:42.000Z">
+<meta property="article:modified_time" content="2023-08-14T06:50:58.094Z">
+<meta property="article:author" content="Evan Hong">
+<meta property="article:tag" content="iOS">
+<meta property="article:tag" content="零碎知识">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Lightsout" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Lightsout</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">YOLO</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-swift-closure" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/01/03/swift-closure/" class="article-date">
+  <time class="dt-published" datetime="2021-01-03T06:38:42.000Z" itemprop="datePublished">2021-01-03</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Swift中闭包的本质
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <ul>
+<li>Swift中闭包相关的概念</li>
+</ul>
+<ol>
+<li><p>一个函数和它所捕获的变量\常量环境组合起来，称作闭包.</p>
+</li>
+<li><p>一般指定义在函数内部的函数.</p>
+</li>
+<li><p>一般它捕获的是外层函数的局部变量\常量.</p>
+</li>
+</ol>
+<ul>
+<li>利用汇编理解闭包本质</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typealias</span> <span class="type">Fn</span> <span class="operator">=</span> (<span class="type">Int</span>) -&gt; <span class="type">Int</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">func</span> <span class="title function_">getFn</span>() -&gt; <span class="type">Fn</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> num <span class="operator">=</span> <span class="number">0</span></span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">plus</span>(<span class="keyword">_</span> <span class="params">i</span>: <span class="type">Int</span>) -&gt; <span class="type">Int</span> &#123;</span><br><span class="line">        num <span class="operator">+=</span> i</span><br><span class="line">        <span class="keyword">return</span> num</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> plus</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> fn <span class="operator">=</span> getFn()</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(fn(<span class="number">1</span>)) <span class="comment">//1</span></span><br><span class="line"><span class="built_in">print</span>(fn(<span class="number">2</span>)) <span class="comment">//3</span></span><br><span class="line"><span class="built_in">print</span>(fn(<span class="number">3</span>)) <span class="comment">//6</span></span><br><span class="line"><span class="built_in">print</span>(fn(<span class="number">4</span>)) <span class="comment">//10</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>以上的示例代码中闭包<code>plus</code>内部使用了外部变量<code>num</code> 并进行一系列操作，而后将<code>getFn()</code>赋值给变量<code>fn</code>，再通过传入不同的参数执行<code>fn</code>， 得到的结果为1， 3，6，10说明<code>num</code>是被<code>plus</code>“捕获”了，但是<code>plus</code>究竟是如何捕获<code>num</code>的还是要借助断点+汇编代码去一探究竟。</p>
+<p>首先先看<code>plus没有访问num</code>变量时的情况，我们将断点打在<code>return plus</code>处</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">func</span> <span class="title function_">getFn</span>() -&gt; <span class="type">Fn</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> num <span class="operator">=</span> <span class="number">0</span></span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">plus</span>(<span class="keyword">_</span> <span class="params">i</span>: <span class="type">Int</span>) -&gt; <span class="type">Int</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> i</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> plus <span class="comment">//断点处</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">TestSwift`getFn():</span><br><span class="line">    0x100003e90 &lt;+0&gt;:  pushq  %rbp</span><br><span class="line">    0x100003e91 &lt;+1&gt;:  movq   %rsp, %rbp</span><br><span class="line">    0x100003e94 &lt;+4&gt;:  movq   $0x0, -0x8(%rbp)</span><br><span class="line">-&gt;  0x100003e9c &lt;+12&gt;: leaq   0xd(%rip), %rax           ; plus #1 (Swift.Int) -&gt; Swift.Int in TestSwift.getFn() -&gt; (Swift.Int) -&gt; Swift.Int at main.swift:14</span><br><span class="line">    0x100003ea3 &lt;+19&gt;: xorl   %ecx, %ecx</span><br><span class="line">    0x100003ea5 &lt;+21&gt;: movl   %ecx, %edx</span><br><span class="line">    0x100003ea7 &lt;+23&gt;: popq   %rbp</span><br><span class="line">    0x100003ea8 &lt;+24&gt;: retq   </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>由断电的命令<code>leaq</code>可以得知，其实<code>getFn()</code>是把0xd+rip的地址 值扔进了<code>rax</code>中。</p>
+<p>因为返回值一般会存放在<code>rax</code>寄存器中，因为<code>getFn</code>函数返回的是<code>plus</code>闭包，所以<code>rax</code>中是存放着<code>plus</code>的地址，<code>rax</code>的值可以通过<code>lldb</code>命令在<code>xcode</code>的控制台中获取。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(lldb) si</span><br><span class="line">(lldb) register read rax</span><br><span class="line">     rax = 0x0000000100003eb0  TestSwift`plus #1 (Swift.Int) -&gt; Swift.Int in TestSwift.getFn() -&gt; (Swift.Int) -&gt; Swift.Int at main.swift:14</span><br><span class="line">(lldb) </span><br></pre></td></tr></table></figure>
+
+<p><code>rip</code>的地址<code>0x100003ea3</code>加上<code>0xd</code>正好是<code>0x0000000100003eb0</code></p>
+<p>接下来看看<code>plus</code>访问了<code>num</code>的情况, 断点还是打在<code>retrun plus</code>。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">func</span> <span class="title function_">getFn</span>() -&gt; <span class="type">Fn</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> num <span class="operator">=</span> <span class="number">0</span></span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">plus</span>(<span class="keyword">_</span> <span class="params">i</span>: <span class="type">Int</span>) -&gt; <span class="type">Int</span> &#123;</span><br><span class="line">        num <span class="operator">+=</span> i</span><br><span class="line">        <span class="keyword">return</span> num </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> plus</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这时候的汇编代码就复杂了许多。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">TestSwift`getFn():</span><br><span class="line">    0x100003cf0 &lt;+0&gt;:  pushq  %rbp</span><br><span class="line">    0x100003cf1 &lt;+1&gt;:  movq   %rsp, %rbp</span><br><span class="line">    0x100003cf4 &lt;+4&gt;:  subq   $0x20, %rsp</span><br><span class="line">    0x100003cf8 &lt;+8&gt;:  movq   $0x0, -0x8(%rbp)</span><br><span class="line">    0x100003d00 &lt;+16&gt;: leaq   0x321(%rip), %rdi</span><br><span class="line">    0x100003d07 &lt;+23&gt;: movl   $0x18, %esi</span><br><span class="line">    0x100003d0c &lt;+28&gt;: movl   $0x7, %edx</span><br><span class="line">    0x100003d11 &lt;+33&gt;: callq  0x100003ee6               ; symbol stub for: swift_allocObject</span><br><span class="line">    0x100003d16 &lt;+38&gt;: movq   %rax, %rcx</span><br><span class="line">    0x100003d19 &lt;+41&gt;: addq   $0x10, %rcx</span><br><span class="line">    0x100003d1d &lt;+45&gt;: movq   %rcx, -0x8(%rbp)</span><br><span class="line">    0x100003d21 &lt;+49&gt;: movq   $0x0, 0x10(%rax)</span><br><span class="line">-&gt;  0x100003d29 &lt;+57&gt;: movq   %rax, %rdi</span><br><span class="line">    0x100003d2c &lt;+60&gt;: movq   %rax, -0x10(%rbp)</span><br><span class="line">    0x100003d30 &lt;+64&gt;: callq  0x100003f0a               ; symbol stub for: swift_retain</span><br><span class="line">    0x100003d35 &lt;+69&gt;: movq   -0x10(%rbp), %rdi</span><br><span class="line">    0x100003d39 &lt;+73&gt;: movq   %rax, -0x18(%rbp)</span><br><span class="line">    0x100003d3d &lt;+77&gt;: callq  0x100003f04               ; symbol stub for: swift_release</span><br><span class="line">    0x100003d42 &lt;+82&gt;: leaq   0x177(%rip), %rax         ; partial apply forwarder for plus #1 (Swift.Int) -&gt; Swift.Int in TestSwift.getFn() -&gt; (Swift.Int) -&gt; Swift.Int at &lt;compiler-generated&gt;</span><br><span class="line">    0x100003d49 &lt;+89&gt;: movq   -0x10(%rbp), %rdx</span><br><span class="line">    0x100003d4d &lt;+93&gt;: addq   $0x20, %rsp</span><br><span class="line">    0x100003d51 &lt;+97&gt;: popq   %rbp</span><br><span class="line">    0x100003d52 &lt;+98&gt;: retq   </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>里面有个关键点是使用了<code>swift_allocObject</code>这个函数，使用了这个函数以为这开辟了堆空间，所以可以直接联想这个新开辟的堆空间是跟<code>num</code>有关的，或许是拿来存放<code>num</code>的。这也解释了为什么<code>num</code>没有在<code>getFn()</code>作用域结束时没有销毁，所以<code>num</code>的值才能累加起来。</p>
+<p>现在就来看看<code>swift_allocObject</code>分配的堆空间内是否存放着<code>num</code>，需要在分配完毕时打汇编断点并打印<code>rax</code>的值， 此时<code>rax</code>的值就是堆空间返回的地址。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">   0x100003d11 &lt;+33&gt;: callq  0x100003ee6               ; symbol stub for: swift_allocObject</span><br><span class="line">-&gt; 0x100003d16 &lt;+38&gt;: movq   %rax, %rcx</span><br></pre></td></tr></table></figure>
+<p>读取到<code>rax</code>的值</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(lldb) register read rax</span><br><span class="line">     rax = 0x00000001018067d0</span><br><span class="line">(lldb) </span><br></pre></td></tr></table></figure>
+
+<p>此时将代码断点<code>return plus</code>的断点去掉，并新加<code>return num</code>的断点，目的是观察<code>num</code>值改变时，堆空间有没有变化，如果有变化就能证明<code>num</code>确实是在堆空间内。 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">(lldb) register read rax</span><br><span class="line">     rax = 0x00000001018067d0</span><br><span class="line">(lldb) x/5xg 0x00000001018067d0</span><br><span class="line">0x1018067d0: 0x0000000100004028 0x0000000200000003</span><br><span class="line">0x1018067e0: 0x0000000000000001 0x00007fff7f0bc658</span><br><span class="line">0x1018067f0: 0x0000000000000000</span><br><span class="line">(lldb) </span><br></pre></td></tr></table></figure>
+
+<p><code>x/数量+格式+字节大小 地址</code>读取内存中的值。</p>
+<p>因为此时调用<code>fn(1)</code>, <code>num</code>初始化的值为<code>1</code>,  在<code>0x1018067e0</code>地址中的<code>8</code>个字节也为<code>1</code>(<code>0x0000000000000001</code>)，于是继续程序的执行，看下次到达断点时那8个字节会不会因为<code>fn(2)</code>的调用而变成<code>3</code>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">(lldb) x/5xg 0x00000001018067d0</span><br><span class="line">0x1018067d0: 0x0000000100004028 0x0000000200000003</span><br><span class="line">0x1018067e0: 0x0000000000000001 0x00007fff7f0bc658</span><br><span class="line">0x1018067f0: 0x0000000000000000</span><br><span class="line">1</span><br><span class="line">(lldb) x/5xg 0x00000001018067d0</span><br><span class="line">0x1018067d0: 0x0000000100004028 0x0000000200000003</span><br><span class="line">0x1018067e0: 0x0000000000000003 0x00007fff7f0bc658</span><br><span class="line">0x1018067f0: 0x00007fff88997f98</span><br><span class="line">(lldb) </span><br></pre></td></tr></table></figure>
+
+<p><code>0x1018067e0</code>地址的<code>8</code>个字节确实变成了<code>3</code>，也证明了<code>num</code>确实存在新开辟的堆空间中。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>可以把闭包想象成是一个类的实例对象</p>
+<p>内存在堆空间</p>
+<p>捕获的局部变量\常量就是对象的成员</p>
+<p>组成闭包的函数就是类内部定义的方法</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/01/03/swift-closure/" data-id="cllainvg40009j39k9upb3ygm" data-title="Swift中闭包的本质" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/" rel="tag">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9B%B6%E7%A2%8E%E7%9F%A5%E8%AF%86/" rel="tag">零碎知识</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/02/28/swiftui-property-wrapper/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          SwiftUI中的常用的属性包装器
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/10/07/iOS-14/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">iOS 14相册相关变更要点</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Combine/" rel="tag">Combine</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KMP/" rel="tag">KMP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SwiftUI/" rel="tag">SwiftUI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/" rel="tag">iOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%B6%E7%A2%8E%E7%9F%A5%E8%AF%86/" rel="tag">零碎知识</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Combine/" style="font-size: 10px;">Combine</a> <a href="/tags/KMP/" style="font-size: 15px;">KMP</a> <a href="/tags/SwiftUI/" style="font-size: 10px;">SwiftUI</a> <a href="/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/tags/%E9%9B%B6%E7%A2%8E%E7%9F%A5%E8%AF%86/" style="font-size: 10px;">零碎知识</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/05/14/KMP-Key-Value-md/">KMP数据持久化之Key-Value</a>
+          </li>
+        
+          <li>
+            <a href="/2023/01/02/KMP-Serialization-md/">KMP中的序列化</a>
+          </li>
+        
+          <li>
+            <a href="/2022/12/20/LiveActivity-md/">LiveActivity.md</a>
+          </li>
+        
+          <li>
+            <a href="/2022/05/18/Combine%20%E2%85%A1/">Combine 浅尝 Ⅱ</a>
+          </li>
+        
+          <li>
+            <a href="/2022/05/17/Combine%20%E2%85%A0/">Combine 浅尝 Ⅰ</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Evan Hong<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
